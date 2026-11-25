@@ -599,9 +599,11 @@ func (a *app) paneTab(c *ui.Context, i int, label string) {
 			return
 		}
 		// The count rolls as it changes, from one song's to the next.
+		// The space before the count is a no-break one: it rolls in a slot
+		// of its own, and a text of only a plain space measures nothing.
 		n, text := a.commentCount(), ""
 		if n > 0 {
-			text = " " + count(n)
+			text = "\u00a0" + count(n)
 		}
 		ui.Text(c, label).FontSize(13).FontWeight(600).TextColor(fg)
 		rollCount(c, &a.tabCount, n, text, fg)

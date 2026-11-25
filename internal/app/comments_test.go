@@ -229,3 +229,26 @@ func TestCommentPagesOverlap(t *testing.T) {
 		t.Errorf("listed %v, %d more asked", ids, len(asked))
 	}
 }
+
+// The comments' tab keeps a space between its name and the count. The space
+// rolled in a slot of its own, and a text of only a space measures nothing,
+// so the count ran into the name, as "Comments550".
+func TestCommentCountSpaced(t *testing.T) {
+	a, tt, _ := commentsApp()
+	a.comments.total, a.comments.list = 0, nil
+	tt.Advance(time.Second)
+	tt.Frame()
+	bare, _ := tt.Find("Comments")
+	a.comments.total = 7
+	tt.Frame()
+	tt.Advance(time.Second)
+	tt.Frame()
+	counted, _ := tt.Find("Comments")
+	digit, ok := tt.Find("7")
+	if !ok {
+		t.Fatal("the tab shows no count")
+	}
+	if grew := counted.W - bare.W; grew < digit.W+2 {
+		t.Errorf("the count adds %.1f to the tab, no more than its digit's %.1f", grew, digit.W)
+	}
+}
